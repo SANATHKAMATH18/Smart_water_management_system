@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>💧 Smart Water Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h2>💧 Smart Water Dashboard</h2>
+
+  <canvas id="usageChart" width="600" height="250"></canvas>
+
+  <table>
+    <tr><th>Timestamp</th><th>Flow</th><th>Level</th><th>Temp</th><th>Humidity</th><th>Points</th></tr>
+    {% for row in records %}
+    <tr>
+      <td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td><td>{{ row[4] }}</td><td>{{ row[5] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <script>
+    async function fetchData() {
+      const response = await fetch('/chart-data');
+      const data = await response.json();
+
+      new Chart(document.getElementById('usageChart'), {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [
+            { label: 'Flow (L/min)', data: data.flow, borderColor: 'blue', fill: false },
+            { label: 'Level (%)', data: data.level, borderColor: 'green', fill: false },
+            { label: 'Temp (°C)', data: data.temp, borderColor: 'red', fill: false }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>

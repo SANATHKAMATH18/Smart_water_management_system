@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Smart Water Analytics</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/chart.min.js"></script>
+</head>
+<body>
+  <h2>📊 Water Usage Analytics</h2>
+  <canvas id="dailyChart" width="600" height="250"></canvas>
+
+  <div class="summary">
+    <p>Average Flow: <span id="avgFlow"></span> L/min</p>
+    <p>Average Level: <span id="avgLevel"></span> %</p>
+    <p>Average Temperature: <span id="avgTemp"></span> °C</p>
+  </div>
+
+  <script>
+    async function getAnalytics() {
+      const response = await fetch('/chart-data');
+      const data = await response.json();
+
+      const avgFlow = (data.flow.reduce((a,b)=>a+b,0)/data.flow.length).toFixed(2);
+      const avgLevel = (data.level.reduce((a,b)=>a+b,0)/data.level.length).toFixed(2);
+      const avgTemp = (data.temp.reduce((a,b)=>a+b,0)/data.temp.length).toFixed(2);
+
+      document.getElementById("avgFlow").innerText = avgFlow;
+      document.getElementById("avgLevel").innerText = avgLevel;
+      document.getElementById("avgTemp").innerText = avgTemp;
+
+      new Chart(document.getElementById('dailyChart'), {
+        type: 'bar',
+        data: {
+          labels: data.labels,
+          datasets: [
+            { label: 'Flow (L/min)', data: data.flow, backgroundColor: 'rgba(0, 123, 255, 0.5)' },
+            { label: 'Level (%)', data: data.level, backgroundColor: 'rgba(40, 167, 69, 0.5)' },
+            { label: 'Temp (°C)', data: data.temp, backgroundColor: 'rgba(220, 53, 69, 0.5)' }
+          ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+    getAnalytics();
+  </script>
+</body>
+</html>

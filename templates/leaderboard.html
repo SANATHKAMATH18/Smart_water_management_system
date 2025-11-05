@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🏆 Smart Water Leaderboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">🏠 Dashboard</a>
+    <a href="/leaderboard">🏆 Leaderboard</a>
+    <a href="/analytics">📊 Analytics</a>
+  </div>
+
+  <h2>🏆 Leaderboard</h2>
+  <table>
+    <tr><th>Rank</th><th>Device ID</th><th>Top Points</th></tr>
+    {% for row in leaderboard %}
+    <tr {% if loop.index == 1 %} style="background-color:#ffd700"
+        {% elif loop.index == 2 %} style="background-color:#c0c0c0"
+        {% elif loop.index == 3 %} style="background-color:#cd7f32" {% endif %}>
+      <td>{{ loop.index }}</td>
+      <td>{{ row[0] }}</td>
+      <td>{{ row[1] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
